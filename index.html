@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DGP Finanzas | Acceso Seguro</title>
+    <title>DGP Finanzas | Inteligencia Financiera</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
             --primary: #2563eb; 
+            --success: #10b981;
+            --danger: #ef4444;
             --navy: #0f172a; 
             --slate: #475569; 
             --bg: #f8fafc;
@@ -18,7 +20,7 @@
         }
 
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: radial-gradient(circle at top right, #e2e8f0, #f8fafc); margin: 0; min-height: 100vh; }
+        body { background: radial-gradient(circle at top right, #e2e8f0, #f8fafc); margin: 0; min-height: 100vh; color: var(--navy); }
 
         /* --- LOGIN --- */
         .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
@@ -47,60 +49,47 @@
             width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: var(--navy); color: white; font-weight: 700; cursor: pointer;
         }
-        .btn-submit:disabled { background: #94a3b8; }
 
         /* --- APP --- */
         #app-box { display: none; }
         .navbar { background: white; border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
         .container { max-width: 500px; margin: 15px auto; padding: 0 15px; }
         
-        .stat-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
-        .quote-box { font-style: italic; color: var(--primary); font-size: 11px; margin-top: 12px; padding: 8px; background: #eff6ff; border-radius: 8px; }
+        .stat-card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; text-align: center; transition: 0.3s; }
+        .stat-card.is-neg { border-top: 5px solid var(--danger); }
+        .stat-card.is-pos { border-top: 5px solid var(--success); }
+        
+        .quote-box { font-style: italic; color: var(--primary); font-size: 11px; margin-top: 12px; padding: 10px; background: #eff6ff; border-radius: 10px; border: 1px solid #dbeafe; }
 
-        /* --- REGISTRO ORDENADO --- */
-        .register-card { background: #ffffff; padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
+        /* --- REGISTRO --- */
+        .register-card { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
         .form-vertical { display: flex; flex-direction: column; align-items: center; gap: 12px; }
         
         .form-vertical input, .form-vertical select { 
-            width: 100%; 
-            padding: 10px 15px !important; 
-            border-radius: 10px; 
-            font-size: 13px; 
-            background: #f8fafc;
+            width: 100%; padding: 12px 15px !important; border-radius: 12px; font-size: 14px; background: #f8fafc; border: 1px solid var(--border);
         }
 
-        /* Selectores pequeños arriba */
-        .input-compact { 
-            max-width: 180px; 
-            height: 38px; 
-            font-size: 12px !important; 
-            text-align: center;
-            margin-bottom: 4px;
-        }
-
-        .search-box { margin-bottom: 15px; position: relative; }
-        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--slate); }
-        .search-box input { padding-left: 40px !important; }
+        .input-compact { max-width: 200px; height: 42px; font-size: 12px !important; text-align: center; font-weight: 600; }
 
         .btn-add { 
-            width: 100%; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            padding: 14px; 
-            border-radius: 10px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            margin-top: 8px; 
+            width: 100%; background: var(--navy); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: 0.3s;
         }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 
-        .table-box { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+        /* --- HISTORIAL --- */
+        .search-box { margin-bottom: 15px; position: relative; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--slate); }
+        .search-box input { padding-left: 40px !important; background: white; }
+
+        .table-box { background: white; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; }
-        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
 
-        .pos { color: #059669; font-weight: 700; }
-        .neg { color: #dc2626; font-weight: 700; }
-        .chart-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 30px; }
+        .pos { color: var(--success); font-weight: 800; }
+        .neg { color: var(--danger); font-weight: 800; }
+        
+        .chart-card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 30px; text-align: center; }
+        .chart-card h4 { margin: 0 0 20px 0; font-size: 12px; text-transform: uppercase; color: var(--slate); letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -108,7 +97,7 @@
 <div id="auth-box" class="login-container">
     <div class="login-card">
         <div class="brand-section">
-            <div class="logo-icon"><i class="fa-solid fa-vault"></i></div>
+            <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
             <h2>DGP Finanzas</h2>
         </div>
         
@@ -118,52 +107,65 @@
         </div>
 
         <div class="input-group">
-            <label>Correo Electrónico</label>
+            <label>Usuario / Email</label>
             <div class="input-wrapper"><i class="fa-solid fa-envelope"></i><input type="email" id="email" placeholder="admin@dgp.com"></div>
         </div>
         <div class="input-group">
-            <label>Clave</label>
+            <label>Contraseña</label>
             <div class="input-wrapper"><i class="fa-solid fa-lock"></i><input type="password" id="pass" placeholder="••••••••"></div>
         </div>
         
-        <button class="btn-submit" id="btn-main" onclick="ejecutar()">INGRESAR</button>
-        <p onclick="toggleAuth()" id="msg-toggle" style="text-align:center; font-size:12px; color:var(--primary); cursor:pointer; margin-top:20px; font-weight:600;">¿No tienes cuenta? Regístrate</p>
+        <button class="btn-submit" id="btn-main" onclick="ejecutar()">INICIAR SESIÓN</button>
+        <p onclick="toggleAuth()" id="msg-toggle" style="text-align:center; font-size:12px; color:var(--primary); cursor:pointer; margin-top:20px; font-weight:600;">¿Eres nuevo? Crea una cuenta</p>
     </div>
 </div>
 
 <div id="app-box">
     <nav class="navbar">
-        <div style="font-weight:800; color:var(--navy); font-size:14px;">DGP FINANZAS</div>
-        <div onclick="logout()" style="font-size:10px; color:var(--slate); cursor:pointer; font-weight:700;">CERRAR SESIÓN</div>
+        <div style="font-weight:800; color:var(--navy); font-size:14px; letter-spacing: -0.5px;">DGP <span style="color:var(--primary)">FINANZAS</span></div>
+        <div onclick="logout()" style="font-size:10px; color:var(--danger); cursor:pointer; font-weight:700; border: 1px solid var(--danger); padding: 5px 10px; border-radius: 8px;">SALIR</div>
     </nav>
 
     <div class="container">
-        <div class="stat-card">
-            <small style="color:var(--slate); font-weight:700; text-transform:uppercase; font-size:9px; letter-spacing:1px;">Balance General</small>
-            <h1 id="total-display" style="font-size:32px; margin:8px 0 0; letter-spacing:-1px;">$0.00</h1>
+        <div id="balance-card" class="stat-card">
+            <small style="color:var(--slate); font-weight:700; text-transform:uppercase; font-size:10px; letter-spacing:1px;">Balance Disponible</small>
+            <h1 id="total-display" style="font-size:36px; margin:8px 0 0; letter-spacing:-1.5px;">$0.00</h1>
             <div id="frase-animo" class="quote-box"></div>
         </div>
 
         <div class="register-card">
-            <h3 style="margin:0 0 15px; font-size:12px; color:var(--primary); font-weight:800; text-transform:uppercase; text-align:center;">Nuevo Registro</h3>
+            <h3 style="margin:0 0 18px; font-size:13px; color:var(--navy); font-weight:800; text-transform:uppercase; text-align:center;">Registrar Operación</h3>
             <div class="form-vertical">
                 <input type="date" id="f_fecha" class="input-compact">
-                <select id="f_tipo" class="input-compact">
+                <select id="f_tipo" class="input-compact" onchange="actualizarUI()">
                     <option value="Ingreso">Ingreso (+)</option>
                     <option value="Egreso" selected>Egreso (-)</option>
                 </select>
                 
-                <select id="f_cat"><option>Servicios</option><option>Nómina</option><option>Insumos</option><option>Marketing</option><option>Varios</option></select>
-                <input type="number" id="f_monto" placeholder="Monto $">
-                <input type="text" id="f_desc" placeholder="Descripción / Concepto">
+                <select id="f_cat">
+                    <option>Ventas / Servicios</option>
+                    <option>Nómina / Sueldos</option>
+                    <option>Alquileres</option>
+                    <option>Marketing / Publicidad</option>
+                    <option>Suministros / Insumos</option>
+                    <option>Mantenimiento</option>
+                    <option>Impuestos</option>
+                    <option>Transporte / Logística</option>
+                    <option>Tecnología / Software</option>
+                    <option>Seguros</option>
+                    <option>Préstamos / Intereses</option>
+                    <option>Varios</option>
+                </select>
+                <input type="number" id="f_monto" placeholder="Monto total">
+                <input type="text" id="f_desc" placeholder="¿De qué se trata?">
                 
-                <button class="btn-add" id="btn-save" onclick="guardar()">GUARDAR MOVIMIENTO</button>
+                <button class="btn-add" id="btn-save" onclick="guardar()">GUARDAR REGISTRO</button>
             </div>
         </div>
 
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="busqueda" placeholder="Filtrar historial..." onkeyup="filtrarDatos()">
+            <input type="text" id="busqueda" placeholder="Buscar concepto o categoría..." onkeyup="filtrarDatos()">
         </div>
 
         <div class="table-box">
@@ -173,6 +175,7 @@
         </div>
 
         <div class="chart-card">
+            <h4 id="chart-title">Distribución de Gastos</h4>
             <canvas id="categoryChart"></canvas>
         </div>
     </div>
@@ -184,6 +187,10 @@
     let datosGlobales = [];
     let modoLogin = true;
 
+    // Paletas de colores
+    const paletaRojos = ['#ef4444', '#f97316', '#fbbf24', '#dc2626', '#ea580c', '#f59e0b'];
+    const paletaVerdes = ['#10b981', '#059669', '#34d399', '#065f46', '#047857', '#6ee7b7'];
+
     function setHoy() {
         const hoy = new Date();
         hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
@@ -193,8 +200,8 @@
     function toggleAuth() {
         modoLogin = !modoLogin;
         document.getElementById('reg-nombre-container').style.display = modoLogin ? 'none' : 'block';
-        document.getElementById('btn-main').innerText = modoLogin ? 'INGRESAR' : 'CREAR CUENTA';
-        document.getElementById('msg-toggle').innerText = modoLogin ? '¿No tienes cuenta? Regístrate' : 'Ya tengo cuenta, entrar';
+        document.getElementById('btn-main').innerText = modoLogin ? 'INICIAR SESIÓN' : 'CREAR CUENTA';
+        document.getElementById('msg-toggle').innerText = modoLogin ? '¿Eres nuevo? Crea una cuenta' : 'Ya tengo cuenta, entrar';
     }
 
     async function ejecutar() {
@@ -202,57 +209,38 @@
         const pass = document.getElementById('pass').value.trim();
         const nombre = document.getElementById('reg-nombre').value.trim();
         const btn = document.getElementById('btn-main');
-
-        if (!email || !pass) return alert("Faltan datos");
+        if (!email || !pass) return alert("Completa los datos");
         
         btn.disabled = true;
-        const textoOriginal = btn.innerText;
-        btn.innerText = modoLogin ? "VALIDANDO..." : "REGISTRANDO...";
+        btn.innerText = "PROCESANDO...";
 
         if (modoLogin) {
             try {
                 const res = await fetch(`${URL}?email=${encodeURIComponent(email)}&pass=${encodeURIComponent(pass)}`);
                 const txt = await res.text();
-                if (txt.includes("ERROR")) { 
-                    alert(txt); 
-                    btn.disabled = false; 
-                    btn.innerText = textoOriginal;
-                } else {
+                if (txt.includes("ERROR")) { alert(txt); btn.disabled = false; btn.innerText = "INICIAR SESIÓN"; }
+                else {
                     localStorage.setItem('dgp_auth', JSON.stringify({email, pass}));
                     datosGlobales = JSON.parse(txt);
                     abrirApp(datosGlobales);
                 }
-            } catch (e) { 
-                alert("Error de conexión"); 
-                btn.disabled = false; 
-                btn.innerText = textoOriginal;
-            }
+            } catch (e) { alert("Error de conexión"); btn.disabled = false; }
         } else {
             try {
-                const res = await fetch(URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ accion: "signup", email, pass, nombre })
-                });
-                const txt = await res.text();
-                if (txt === "SUCCESS") { 
-                    alert("¡Registro exitoso!"); 
-                    toggleAuth(); 
-                } else { alert(txt); }
+                const res = await fetch(URL, { method: 'POST', body: JSON.stringify({ accion: "signup", email, pass, nombre }) });
+                if (await res.text() === "SUCCESS") { alert("¡Cuenta creada!"); toggleAuth(); }
+                else { alert("Error al registrar"); }
             } catch (e) { alert("Error"); }
-            btn.disabled = false;
-            btn.innerText = "CREAR CUENTA";
+            btn.disabled = false; btn.innerText = "CREAR CUENTA";
         }
     }
 
     function abrirApp(datos, resetBusqueda = true) {
         document.getElementById('auth-box').style.display = 'none';
         document.getElementById('app-box').style.display = 'block';
-        if(resetBusqueda) {
-            document.getElementById('busqueda').value = "";
-            setHoy();
-        }
+        if(resetBusqueda) { document.getElementById('busqueda').value = ""; setHoy(); }
         
-        const frases = ["El control es éxito.", "Gestionar es ganar.", "Cada moneda cuenta."];
+        const frases = ["El éxito financiero comienza con un registro.", "Tus finanzas, bajo control.", "Planifica hoy, disfruta mañana."];
         document.getElementById('frase-animo').innerText = `"${frases[Math.floor(Math.random()*frases.length)]}"`;
 
         let html = "", total = 0, catData = {};
@@ -262,12 +250,45 @@
             total += esI ? m : -m;
             const fechaStr = f[1] ? f[1].toString().substring(0, 10) : "";
             html += `<tr><td><strong>${f[2]}</strong><br><small style="color:var(--slate)">${f[3]} • ${fechaStr}</small></td><td style="text-align:right" class="${esI?'pos':'neg'}">${esI?'+':'-'}$${m.toLocaleString()}</td></tr>`;
-            if(!esI) catData[f[3]] = (catData[f[3]] || 0) + m;
+            
+            // Lógica de gráfico: si el total es negativo, graficamos gastos. Si es positivo, graficamos ingresos.
+            catData[f[3]] = (catData[f[3]] || 0) + m;
         });
 
-        document.getElementById('tabla-cuerpo').innerHTML = html;
+        const balCard = document.getElementById('balance-card');
+        balCard.className = total >= 0 ? 'stat-card is-pos' : 'stat-card is-neg';
+        
         document.getElementById('total-display').innerText = `$${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        actualizarGrafico(catData);
+        document.getElementById('total-display').style.color = total >= 0 ? 'var(--success)' : 'var(--danger)';
+        
+        document.getElementById('tabla-cuerpo').innerHTML = html;
+        actualizarGrafico(catData, total >= 0);
+    }
+
+    function actualizarGrafico(catData, esPositivo) {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const tit = document.getElementById('chart-title');
+        tit.innerText = esPositivo ? "Distribución de Ingresos" : "Distribución de Gastos";
+        
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(catData),
+                datasets: [{ 
+                    data: Object.values(catData), 
+                    backgroundColor: esPositivo ? paletaVerdes : paletaRojos,
+                    hoverOffset: 15,
+                    borderWidth: 3,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: { 
+                responsive: true, 
+                cutout: '70%',
+                plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { size: 11, weight: '600' } } } } 
+            }
+        });
     }
 
     function filtrarDatos() {
@@ -276,28 +297,14 @@
         abrirApp(filtrados, false);
     }
 
-    function actualizarGrafico(catData) {
-        const ctx = document.getElementById('categoryChart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(catData),
-                datasets: [{ data: Object.values(catData), backgroundColor: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#1e40af'] }]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
-        });
-    }
-
     async function guardar() {
         const btn = document.getElementById('btn-save'); 
         const auth = JSON.parse(localStorage.getItem('dgp_auth'));
         const d = { email: auth.email, fecha: document.getElementById('f_fecha').value, monto: document.getElementById('f_monto').value, descripcion: document.getElementById('f_desc').value, categoria: document.getElementById('f_cat').value, tipo: document.getElementById('f_tipo').value };
         
-        if (!d.monto || !d.descripcion) return alert("Completa los campos");
+        if (!d.monto || !d.descripcion) return alert("Datos incompletos");
 
-        btn.disabled = true;
-        btn.innerText = "GUARDANDO...";
+        btn.disabled = true; btn.innerText = "GUARDANDO...";
         try {
             await fetch(URL, { method: 'POST', body: JSON.stringify(d) });
             const res = await fetch(`${URL}?email=${encodeURIComponent(auth.email)}&pass=${encodeURIComponent(auth.pass)}`);
@@ -306,8 +313,7 @@
             document.getElementById('f_monto').value = ""; document.getElementById('f_desc').value = "";
             setHoy();
         } catch (e) { alert("Error al guardar"); }
-        btn.disabled = false;
-        btn.innerText = "GUARDAR MOVIMIENTO";
+        btn.disabled = false; btn.innerText = "GUARDAR REGISTRO";
     }
 
     function logout() { localStorage.clear(); location.reload(); }
