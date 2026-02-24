@@ -91,7 +91,6 @@
             padding: 10px; background: #eff6ff; border-radius: 8px;
         }
 
-        /* REGISTRO VERTICAL */
         .register-card { 
             background: #ffffff; padding: 25px; border-radius: 16px; border: 1px solid var(--border); 
             margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
@@ -103,7 +102,6 @@
 
         #f_fecha { width: 160px; }
 
-        /* BUSCADOR */
         .search-box {
             margin-bottom: 15px; position: relative;
         }
@@ -117,7 +115,6 @@
         }
         .btn-add:hover { background: var(--navy); transform: translateY(-1px); }
 
-        /* TABLA Y REPORTES */
         .section-title { font-size: 12px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin: 30px 0 15px; letter-spacing: 1px; display: block; }
 
         .table-box { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; }
@@ -140,6 +137,10 @@
             <h2>DGP Finanzas</h2>
         </div>
         <div id="form-login">
+            <div id="reg-nombre-container" style="display:none" class="input-group">
+                <label>Nombre Completo</label>
+                <div class="input-wrapper"><i class="fa-solid fa-user"></i><input type="text" id="reg-nombre" placeholder="Tu nombre"></div>
+            </div>
             <div class="input-group">
                 <label>Correo Electrónico</label>
                 <div class="input-wrapper"><i class="fa-solid fa-envelope"></i><input type="email" id="email" placeholder="admin@dgp.com"></div>
@@ -149,6 +150,7 @@
                 <div class="input-wrapper"><i class="fa-solid fa-lock"></i><input type="password" id="pass" placeholder="••••••••"></div>
             </div>
             <button class="btn-submit" id="btn-main" onclick="ejecutar()">INGRESAR</button>
+            <p onclick="toggle()" id="msg-toggle" style="text-align:center; font-size:12px; color:var(--primary); cursor:pointer; margin-top:20px; font-weight:600;">Crear cuenta nueva</p>
         </div>
     </div>
 </div>
@@ -202,6 +204,7 @@
     const URL = "https://script.google.com/macros/s/AKfycbysvYM29fpqFOhyaSTQKUvfymVMgO83PfHeO-wMHjZqAlfd5X7MQZLNxSUhKeYmIf1RgQ/exec";
     let chartInstance = null;
     let datosGlobales = [];
+    let modoLogin = true;
 
     const frases = [
         "El éxito es la suma de pequeños esfuerzos diarios.",
@@ -210,16 +213,36 @@
         "Gestionar es ganar."
     ];
 
+    function toggle() {
+        modoLogin = !modoLogin;
+        document.getElementById('reg-nombre-container').style.display = modoLogin ? "none" : "block";
+        document.getElementById('btn-main').innerText = modoLogin ? "INGRESAR" : "REGISTRAR";
+        document.getElementById('msg-toggle').innerText = modoLogin ? "Crear cuenta nueva" : "Ya tengo cuenta, ingresar";
+    }
+
     async function ejecutar() {
         const email = document.getElementById('email').value.trim();
         const pass = document.getElementById('pass').value.trim();
+        const nombre = document.getElementById('reg-nombre').value.trim();
         const btn = document.getElementById('btn-main');
-        if (!email || pass.length < 8) return alert("Credenciales inválidas");
-        btn.disabled = true; btn.innerText = "ACCEDIENDO...";
+
+        if (!email || pass.length < 8) return alert("Credenciales inválidas (mínimo 8 caracteres)");
+        
+        btn.disabled = true; 
+        btn.innerText = modoLogin ? "ACCEDIENDO..." : "CREANDO CUENTA...";
+
         try {
-            const res = await fetch(URL + `?email=${encodeURIComponent(email)}&pass=${encodeURIComponent(pass)}`);
+            let query = `?email=${encodeURIComponent(email)}&pass=${encodeURIComponent(pass)}`;
+            if(!modoLogin) query += `&nombre=${encodeURIComponent(nombre)}`;
+
+            const res = await fetch(URL + query);
             const txt = await res.text();
-            if (txt.includes("ERROR")) { alert(txt); btn.disabled = false; btn.innerText = "INGRESAR"; }
+
+            if (txt.includes("ERROR")) { 
+                alert(txt); 
+                btn.disabled = false; 
+                btn.innerText = modoLogin ? "INGRESAR" : "REGISTRAR"; 
+            }
             else { 
                 localStorage.setItem('dgp_auth', JSON.stringify({email, pass})); 
                 datosGlobales = JSON.parse(txt);
@@ -236,7 +259,7 @@
             const fecha = f[1].toString().toLowerCase();
             return descripcion.includes(termino) || categoria.includes(termino) || fecha.includes(termino);
         })];
-        abrirApp(filtrados, false); // false para no resetear el texto de búsqueda
+        abrirApp(filtrados, false);
     }
 
     function abrirApp(datos, resetBusqueda = true) {
