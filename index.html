@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGP Finanzas | Acceso Seguro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { 
+            --primary: #2563eb; 
+            --primary-glow: rgba(37, 99, 235, 0.15);
+            --navy: #0f172a; 
+            --slate: #475569; 
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background: radial-gradient(circle at top right, #e2e8f0, #f8fafc);
+            margin: 0; 
+            min-height: 100vh;
+        }
+
+        /* --- LOGIN INTERFAZ GLASS --- */
+        .login-container {
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;
+        }
+
+        .login-card {
+            background: var(--white);
+            padding: 48px 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            width: 100%; max-width: 440px;
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(30px) rotateX(-5deg); }
+            to { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+
+        .login-card::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, var(--primary), #60a5fa);
+        }
+
+        .brand-section { text-align: center; margin-bottom: 40px; }
+        .logo-icon {
+            width: 52px; height: 52px; background: var(--navy); color: white;
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px; font-size: 24px;
+        }
+
+        .brand-section h2 { margin: 0; font-size: 26px; font-weight: 800; color: var(--navy); letter-spacing: -1px; }
+
+        .input-group { margin-bottom: 24px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        
+        input, select {
+            width: 100%; padding: 12px 16px 12px 48px;
+            border: 1.5px solid #e2e8f0; border-radius: 12px;
+            font-size: 14px; color: var(--navy); background: #fcfdfe; transition: all 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+
+        .btn-submit {
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            background: var(--navy); color: white; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+
+        /* --- DASHBOARD APP --- */
+        #app-box { display: none; }
+        .navbar { background: white; border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .container { max-width: 600px; margin: 20px auto; padding: 0 20px; }
+        
+        .stat-card { background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 25px; text-align: center; }
+        
+        .quote-box {
+            font-style: italic; color: var(--primary); font-size: 12px; margin-top: 15px; font-weight: 500;
+            padding: 10px; background: #eff6ff; border-radius: 8px;
+        }
+
+        /* REGISTRO VERTICAL */
+        .register-card { 
+            background: #ffffff; padding: 25px; border-radius: 16px; border: 1px solid var(--border); 
+            margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .register-card h3 { margin: 0 0 20px 0; font-size: 14px; color: var(--primary); font-weight: 800; text-transform: uppercase; }
+
+        .form-vertical { display: flex; flex-direction: column; gap: 15px; }
+        .form-vertical input, .form-vertical select { padding-left: 15px !important; }
+
+        #f_fecha { width: 160px; }
+
+        /* BUSCADOR */
+        .search-box {
+            margin-bottom: 15px; position: relative;
+        }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--slate); font-size: 14px; }
+        .search-box input { padding: 10px 10px 10px 40px !important; border-radius: 10px; font-size: 13px; }
+
+        .btn-add { 
+            background: var(--primary); color: white; border: none; padding: 14px; 
+            border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; 
+            transition: 0.3s; margin-top: 5px;
+        }
+        .btn-add:hover { background: var(--navy); transform: translateY(-1px); }
+
+        /* TABLA Y REPORTES */
+        .section-title { font-size: 12px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin: 30px 0 15px; letter-spacing: 1px; display: block; }
+
+        .table-box { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafc; padding: 12px 15px; text-align: left; font-size: 11px; color: var(--slate); }
+        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+
+        .pos { color: #059669; font-weight: 700; }
+        .neg { color: #dc2626; font-weight: 700; }
+
+        .chart-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+
+<div id="auth-box" class="login-container">
+    <div class="login-card">
+        <div class="brand-section">
+            <div class="logo-icon"><i class="fa-solid fa-vault"></i></div>
+            <h2>DGP Finanzas</h2>
+        </div>
+        <div id="form-login">
+            <div class="input-group">
+                <label>Correo Electrónico</label>
+                <div class="input-wrapper"><i class="fa-solid fa-envelope"></i><input type="email" id="email" placeholder="admin@dgp.com"></div>
+            </div>
+            <div class="input-group">
+                <label>Clave</label>
+                <div class="input-wrapper"><i class="fa-solid fa-lock"></i><input type="password" id="pass" placeholder="••••••••"></div>
+            </div>
+            <button class="btn-submit" id="btn-main" onclick="ejecutar()">INGRESAR</button>
+        </div>
+    </div>
+</div>
+
+<div id="app-box">
+    <nav class="navbar">
+        <div style="font-weight:800; color:var(--navy)">DGP FINANZAS</div>
+        <div onclick="logout()" style="font-size:11px; color:var(--slate); cursor:pointer; font-weight:700;">CERRAR SESIÓN</div>
+    </nav>
+
+    <div class="container">
+        <div class="stat-card">
+            <small style="color:var(--slate); font-weight:700; text-transform:uppercase; font-size:10px; letter-spacing:1px;">Balance Filtrado</small>
+            <h1 id="total-display" style="font-size:36px; margin:10px 0 0; letter-spacing:-1.5px;">$0.00</h1>
+            <div id="frase-animo" class="quote-box"></div>
+        </div>
+
+        <div class="register-card">
+            <h3>Nuevo Registro</h3>
+            <div class="form-vertical">
+                <div><label>Fecha</label><input type="date" id="f_fecha"></div>
+                <div><label>Tipo</label><select id="f_tipo"><option value="Ingreso">Ingreso (+)</option><option value="Egreso">Egreso (-)</option></select></div>
+                <div><label>Categoría</label><select id="f_cat"><option>Servicios</option><option>Nómina</option><option>Insumos</option><option>Mantenimiento</option><option>Marketing</option><option>Impuestos</option><option>Transporte</option><option>Alquiler</option><option>Inversión</option><option>Otros</option></select></div>
+                <div><label>Monto</label><input type="number" id="f_monto" placeholder="0.00"></div>
+                <div><label>Concepto</label><input type="text" id="f_desc" placeholder="Descripción"></div>
+                <button class="btn-add" id="btn-save" onclick="guardar()">REGISTRAR MOVIMIENTO</button>
+            </div>
+        </div>
+
+        <span class="section-title">Historial y Filtros</span>
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="busqueda" placeholder="Buscar por concepto, categoría o fecha..." onkeyup="filtrarDatos()">
+        </div>
+
+        <div class="table-box">
+            <table>
+                <thead><tr><th>DETALLE TÉCNICO</th><th style="text-align:right">VALOR</th></tr></thead>
+                <tbody id="tabla-cuerpo"></tbody>
+            </table>
+        </div>
+
+        <span class="section-title">Análisis de Gastos Filtrados</span>
+        <div class="chart-card">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const URL = "https://script.google.com/macros/s/AKfycbysvYM29fpqFOhyaSTQKUvfymVMgO83PfHeO-wMHjZqAlfd5X7MQZLNxSUhKeYmIf1RgQ/exec";
+    let chartInstance = null;
+    let datosGlobales = [];
+
+    const frases = [
+        "El éxito es la suma de pequeños esfuerzos diarios.",
+        "La disciplina financiera es el camino a la libertad.",
+        "Cada moneda cuenta para tu futuro.",
+        "Gestionar es ganar."
+    ];
+
+    async function ejecutar() {
+        const email = document.getElementById('email').value.trim();
+        const pass = document.getElementById('pass').value.trim();
+        const btn = document.getElementById('btn-main');
+        if (!email || pass.length < 8) return alert("Credenciales inválidas");
+        btn.disabled = true; btn.innerText = "ACCEDIENDO...";
+        try {
+            const res = await fetch(URL + `?email=${encodeURIComponent(email)}&pass=${encodeURIComponent(pass)}`);
+            const txt = await res.text();
+            if (txt.includes("ERROR")) { alert(txt); btn.disabled = false; btn.innerText = "INGRESAR"; }
+            else { 
+                localStorage.setItem('dgp_auth', JSON.stringify({email, pass})); 
+                datosGlobales = JSON.parse(txt);
+                abrirApp(datosGlobales); 
+            }
+        } catch (e) { alert("Error de red"); btn.disabled = false; }
+    }
+
+    function filtrarDatos() {
+        const termino = document.getElementById('busqueda').value.toLowerCase();
+        const filtrados = [datosGlobales[0], ...datosGlobales.slice(1).filter(f => {
+            const descripcion = f[2].toString().toLowerCase();
+            const categoria = f[3].toString().toLowerCase();
+            const fecha = f[1].toString().toLowerCase();
+            return descripcion.includes(termino) || categoria.includes(termino) || fecha.includes(termino);
+        })];
+        abrirApp(filtrados, false); // false para no resetear el texto de búsqueda
+    }
+
+    function abrirApp(datos, resetBusqueda = true) {
+        document.getElementById('auth-box').style.display = 'none';
+        document.getElementById('app-box').style.display = 'block';
+        if(resetBusqueda) document.getElementById('busqueda').value = "";
+        
+        const index = Math.floor(Math.random() * frases.length);
+        document.getElementById('frase-animo').innerText = `"${frases[index]}"`;
+
+        let html = "", total = 0, catData = {};
+
+        datos.slice(1).reverse().forEach(f => {
+            const m = parseFloat(f[5]); 
+            const esI = f[4] === "Ingreso"; 
+            total += esI ? m : -m;
+            const fechaStr = f[1].toString().substring(0, 10);
+
+            html += `<tr><td><strong>${f[2]}</strong><br><small style="color:var(--slate)">${f[3]} • ${fechaStr}</small></td><td style="text-align:right" class="${esI?'pos':'neg'}">${esI?'+':'-'}$${m.toLocaleString()}</td></tr>`;
+
+            if(!esI) catData[f[3]] = (catData[f[3]] || 0) + m;
+        });
+
+        document.getElementById('tabla-cuerpo').innerHTML = html;
+        document.getElementById('total-display').innerText = `$${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        actualizarGrafico(catData);
+    }
+
+    function actualizarGrafico(catData) {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(catData),
+                datasets: [{
+                    data: Object.values(catData),
+                    backgroundColor: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#1e40af'],
+                    borderWidth: 2
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    async function guardar() {
+        const btn = document.getElementById('btn-save'); 
+        const auth = JSON.parse(localStorage.getItem('dgp_auth'));
+        const d = { email: auth.email, fecha: document.getElementById('f_fecha').value, monto: document.getElementById('f_monto').value, descripcion: document.getElementById('f_desc').value, categoria: document.getElementById('f_cat').value, tipo: document.getElementById('f_tipo').value };
+        
+        if (!d.monto || !d.descripcion) return alert("Faltan datos");
+        btn.disabled = true; btn.innerText = "GUARDANDO...";
+        
+        try {
+            await fetch(URL, { method: 'POST', body: JSON.stringify(d) });
+            const res = await fetch(URL + `?email=${encodeURIComponent(auth.email)}&pass=${encodeURIComponent(auth.pass)}`);
+            datosGlobales = JSON.parse(await res.text());
+            abrirApp(datosGlobales);
+            document.getElementById('f_monto').value = ""; document.getElementById('f_desc').value = "";
+        } catch (e) { alert("Error"); }
+        btn.disabled = false; btn.innerText = "REGISTRAR MOVIMIENTO";
+    }
+
+    function logout() { localStorage.clear(); location.reload(); }
+    
+    window.onload = () => {
+        document.getElementById('f_fecha').value = new Date().toISOString().split('T')[0];
+        const auth = JSON.parse(localStorage.getItem('dgp_auth'));
+        if (auth) { 
+            document.getElementById('email').value = auth.email; 
+            document.getElementById('pass').value = auth.pass; 
+            ejecutar(); 
+        }
+    };
+</script>
+</body>
+</html>
